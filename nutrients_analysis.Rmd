@@ -1,0 +1,203 @@
+---
+title: 'Data analysis for Fruits in cup '
+author: "Xintong Zhou"
+date: "March 14, 2018"
+output:
+  html_document:
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+  word_document:
+    toc: yes
+---
+
+
+```{r, echo = F, warning = F, message=F}
+library(knitr)
+library(kableExtra)
+library(data.table)
+library(plotly)
+
+
+setwd("~/Work/Livzo")
+food<-read.csv("new_potassium_phosphorus_database.csv", header = TRUE)
+
+#organize dataframe & colnames
+food <- food[,1:7]
+colnames(food)[1]<-"food_category"
+
+#food category
+food_cate = levels(food$food_category)
+food_cate_num = length(food_cate)
+
+#create corresponding df for the category under certain serving size
+food_cate_use = food_cate[21] # analysis of which food cate
+#serving size
+serving_size =  "cup"
+
+#construct data frame
+df_new = food[food$dimension_name == serving_size & food$food_category == food_cate_use, ]
+
+```
+  
+
+#statistics of <span style="color:MediumSeaGreen">phosphorus</span> in `r food_cate_use`
+  
+```{r, echo=F, warning=F}
+summary(df_new$phosphorus)
+```
+
+```{r, echo = F, warning= F}
+#all of food in the selected category with the greatest phosphorus
+
+
+DT_df_new<-as.data.table(df_new)
+setkey(DT_df_new, food_category)
+max_pho_all = DT_df_new[ , j = list(food_name = metric_category_name[which(phosphorus == max(phosphorus))],phosphorus = max(phosphorus) ), by = food_category]
+
+#all of food in the selected category with the lowest phosphorus
+
+min_pho_all = DT_df_new[ , j = list(food_name = metric_category_name[which(phosphorus == min(phosphorus))],phosphorus = min(phosphorus)), by = food_category]
+
+```
+
+##food with lowest phosphorus in `r food_cate_use`
+```{r, echo=F,warning=F}
+stat_pho_min_tbl = kable(min_pho_all, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "responsive"), position = "left")
+stat_pho_min_tbl
+```
+
+
+##food with greatest phosphorus in `r food_cate_use`
+```{r,echo=F,warning=F}
+stat_pho_max_tbl = kable(max_pho_all, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "responsive"), position = "left")
+stat_pho_max_tbl
+```
+
+##plots of phosphorus for `r food_cate_use`
+
+```{r, echo=F, warning=F, message=F}
+#boxplot
+box_title = paste("boxplot of phosphorus (mg) in",food_cate_use, "(", serving_size, ")" )
+
+plot_ly(y = df_new$phosphorus, type = "box", hoverinfo = df_new$metric_category_name + df_new$phosphorus, marker = list(
+                       color = 'rgba(102, 205, 170, .6)',
+                       line = list(color = 'rgba(46, 139, 87, .9)',
+                                   width = 1)))%>%
+  layout(title = box_title,
+         yaxis = list(title = "phosphorus"))
+
+
+#histogram
+hist_title = paste("histogram of phosphorus (mg) in", food_cate_use,"(", serving_size, ")" )
+plot_ly(x = df_new$phosphorus, type = "histogram",
+        marker = list(
+                       color = 'rgba(102, 205, 170, .6)',
+                       line = list(color = 'rgba(46, 139, 87, .9)',
+                                   width = 1)))%>%
+  layout(title = hist_title,
+                 yaxis = list(zeroline=FALSE, title = "frequency"),
+                 xaxis= list(title = "phosphorus (mg)"))
+
+#scatterplot
+scatter_title = paste("phosphorus (mg) in", food_cate_use,"(", serving_size, ")" )
+
+plot_ly(data = df_new, x= ~ metric_category_name, y = ~phosphorus, type = "scatter", name = "phosphorus of food" , mode = "markers",
+        marker = list(size = 8,
+                       color = 'rgba(102, 205, 170, .6)',
+                       line = list(color = 'rgba(46, 139, 87, .9)',
+                                   width = 1)))%>%
+  add_trace(y = median(df_new$phosphorus), name = "median", mode = "lines")%>%
+          layout(title = scatter_title,
+                 yaxis = list(zeroline=FALSE),
+                 xaxis= list(title = "food",visible = FALSE),
+                  width = 900)
+#density
+plot(density(df_new$phosphorus),main = "density of phosphorus (mg) in fruits (g)", xlab = "phosphorus (mg)")
+
+```
+
+
+
+
+#statistics of <span style = "color:MediumPurple ">potassium</span> in `r food_cate_use`
+  
+```{r, echo=F, warning=F}
+summary(df_new$potassium)
+```
+
+
+```{r, echo = F, warning= F}
+#all of food in the selected category with the greatest potassium
+
+max_pot_all = DT_df_new[ , j = list(food_name = metric_category_name[which(potassium == max(potassium))], potassium = max(potassium) ), by = food_category]
+
+#all of food in the selected category with the lowest potassium
+
+
+min_pot_all = DT_df_new[ , j = list(food_name = metric_category_name[which(potassium == min(potassium))],potassium = min(potassium)), by = food_category]
+
+```
+
+##food with lowest potassium in `r food_cate_use`
+
+```{r, echo = F, warning= F}
+stat_pot_min_tbl = kable(min_pot_all, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "responsive"), position = "left")
+stat_pot_min_tbl
+```
+
+
+##food with greatest potassium in `r food_cate_use`
+
+```{r, echo = F, warning= F}
+stat_pot_max_tbl = kable(max_pot_all, "html") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "responsive"), position = "left")
+stat_pot_max_tbl
+```
+
+##plots of potassium for `r food_cate_use`
+
+```{r, echo=F, warning=F, message=F}
+#boxplot
+box_title = paste("boxplot of potassium (mg) in",food_cate_use, "(", serving_size, ")" )
+
+plot_ly(y = df_new$potassium, type = "box", hoverinfo = df_new$metric_category_name + df_new$potassium, marker = list(
+                       color = 'rgba(147, 112, 219, .6)',
+                       line = list(color = 'rgba(148,0,211, .9)',
+                                   width = 1)))%>%
+  layout(title = box_title,
+         yaxis = list(title = "potassium"))
+
+
+#histogram
+hist_title = paste("histogram of potassium (mg) in", food_cate_use,"(", serving_size, ")" )
+plot_ly(x = df_new$potassium, type = "histogram",
+        marker = list(
+                       color = 'rgba(147, 112, 219, .6)',
+                       line = list(color = 'rgba(148,0,211, .9)',
+                                   width = 1)))%>%
+  layout(title = hist_title,
+                 yaxis = list(zeroline=FALSE, title = "frequency"),
+                 xaxis= list(title = "potassium (mg)"))
+
+#scatterplot
+scatter_title = paste("potassium (mg) in", food_cate_use,"(", serving_size, ")" )
+
+plot_ly(data = df_new, x= ~ metric_category_name, y = ~potassium, type = "scatter", name = "potassium of food" , mode = "markers",
+        marker = list(size = 8,
+                       color = 'rgba(147, 112, 219, .6)',
+                       line = list(color = 'rgba(148,0,211, .9)',
+                                   width = 1)))%>%
+  add_trace(y = median(df_new$potassium), name = "median", mode = "lines")%>%
+          layout(title = scatter_title,
+                 yaxis = list(zeroline=FALSE),
+                 xaxis= list(title = "food",visible = FALSE),
+                  width = 900)
+#density
+plot(density(df_new$potassium),main = "density of potassium (mg) in fruits (g)", xlab = "potassium (mg)")
+
+```
