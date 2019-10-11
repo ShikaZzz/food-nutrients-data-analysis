@@ -1,6 +1,6 @@
 ---
 title: 'Data analysis for Fruits in cup '
-author: "Xintong Zhou"
+author: "ShikaZzz"
 date: "March 14, 2018"
 output:
   html_document:
