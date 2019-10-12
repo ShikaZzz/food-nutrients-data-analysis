@@ -9,7 +9,7 @@ This project is about the analysis of food nutrients data, with a focus on potas
 Add `toc_float: yes` under your Rmarkdown format on the very top of the code.
 example:
 
-![example](rmarkdown_float.jpg)
+![example](https://github.com/ShikaZzz/food-nutrients-data-analysis/rmarkdown_float.jpg)
 ```R
 output:
   html_document:
