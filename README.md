@@ -1,15 +1,15 @@
 # food-nutrients-data-analysis
 This project is about the analysis of food nutrients data, with a focus on potassium and phosphorus.
 
-:arrow_up Above is part of my code written in R and generated using Rmarkdown. 
+:arrow_up Above is part of my code written in R and generated using R Markdown. 
 :arrow_down Below are some pieces of code mainly for data visualization. Hope you find them turn out to be useful some time. 
 
-## floating content table for Rmarkdown
+## floating content table for R Markdown
 
 Add `toc_float: yes` under your Rmarkdown format on the very top of the code.
 example:
 
-![example](https://github.com/ShikaZzz/food-nutrients-data-analysis/rmarkdown_float.jpg)
+![example](rmarkdown_float.jpg)
 ```R
 output:
   html_document:
