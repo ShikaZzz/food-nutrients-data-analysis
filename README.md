@@ -9,6 +9,7 @@ This project is about the analysis of food nutrients data, with a focus on potas
 Add `toc_float: yes` under your Rmarkdown format on the very top of the code.
 example:
 
+![example](rmarkdown_float.jpg)
 ```R
 output:
   html_document:
@@ -31,7 +32,7 @@ stat_pho_min_tbl = kable(min_pho_all, "html") %>%
 stat_pho_min_tbl
 ```
 ## graphs
-__Packages__: plotly
+__Packages__: `plotly`
 
 ```R
 #boxplot
